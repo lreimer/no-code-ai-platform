@@ -7,9 +7,10 @@ metadata:
     app: flowise
 spec:
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 80
     targetPort: http
   selector:
     app: flowise
-  type: LoadBalancer
+  type: ClusterIP
