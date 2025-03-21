@@ -1,0 +1,79 @@
+# https://taskfile.dev
+version: '3'
+
+dotenv: ['.env', '{{.HOME}}/.env']
+
+env:
+  REPO_NAME: no-code-ai-platform
+  GITHUB_USER: lreimer
+  GCP_PROJECT: data-engineering-lab-411011
+  GCP_REGION: europe-west4
+  
+vars: {}
+
+tasks:
+  default:
+    desc: If running only "task" print all available tasks
+    cmd: task --list-all
+    silent: true
+
+  brew:
+    desc: Install tool dependencies with brew
+    internal: true
+    run: once
+    platforms: [darwin, linux]
+    cmd: brew bundle --no-lock --verbose
+    status:
+      - brew bundle check --verbose
+
+  create-cluster:
+    desc: Create a new GKE cluster
+    silent: true
+    requires:
+      vars: [GCP_PROJECT, GCP_REGION]
+    cmds:
+      - gcloud container clusters create no-code-ai-platform --location={{.GCP_REGION}} --project={{.GCP_PROJECT}} --release-channel=regular
+      - kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account)
+      - kubectl cluster-info
+
+  destroy-cluster:
+    desc: Destroy a GKE cluster
+    silent: true
+    requires:
+      vars: [GCP_PROJECT, GCP_REGION]
+    cmd: |
+      gcloud container clusters delete no-code-ai-platform \
+        --location={{.GCP_REGION}} \
+        --project={{.GCP_PROJECT}} \
+        --async --quiet
+
+  bootstrap-flux:
+    desc: Bootstrap Flux
+    silent: true
+    requires:
+      vars: [GITHUB_USER, GITHUB_TOKEN, REPO_NAME]
+    cmd: | 
+      flux bootstrap github \
+        --owner={{.GITHUB_USER}} \
+        --repository={{.REPO_NAME}} \
+        --branch=main \
+        --path=./platform/foundation \
+        --read-write-key \
+        --personal
+
+  reconcile-flux:
+    desc: Reconcile flux-system
+    silent: true
+    cmd: flux reconcile source git flux-system
+
+  flux-status:
+    desc: Show the status of the flux-system
+    silent: true
+    cmd: flux get all --all-namespaces
+
+  openai-api-secret:
+    desc: Create the OpenAI secret
+    silent: true
+    requires:
+      vars: [OPENAI_API_KEY]
+    cmd: kubectl create secret generic openai-api-key --from-literal=OPENAI_API_KEY={{.OPENAI_API_KEY}} --from-literal=OPENAI_APIKEY={{.OPENAI_API_KEY}}
