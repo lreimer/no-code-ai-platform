@@ -32,7 +32,7 @@ tasks:
     requires:
       vars: [GCP_PROJECT, GCP_REGION]
     cmds:
-      - gcloud container clusters create no-code-ai-platform --location={{.GCP_REGION}} --project={{.GCP_PROJECT}} --release-channel=regular
+      - gcloud container clusters create no-code-ai-platform --location={{.GCP_REGION}} --project={{.GCP_PROJECT}} --release-channel=regular --addons HttpLoadBalancing,HorizontalPodAutoscaling --num-nodes=1 --min-nodes=1 --max-nodes=5 --enable-autoscaling --autoscaling-profile=optimize-utilization --machine-type=n1-standard-8
       - kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account)
       - kubectl cluster-info
 
