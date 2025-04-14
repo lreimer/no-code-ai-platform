@@ -1,6 +1,6 @@
 # No-Code AI platform
 
-No-Code / Low-Code AI platform using Flowise or LangFlow on GKE.
+No-Code / Low-Code AI platform using Flowise, LangFlow, JupyterHub and n8n on GKE.
 
 ## Setup
 
@@ -10,6 +10,7 @@ brew bundle
 
 # create and bootstrap GKE cluster
 task create-cluster
+task create-secrets
 task bootstrap-flux
 ```
 

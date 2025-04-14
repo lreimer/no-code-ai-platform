@@ -47,6 +47,13 @@ tasks:
       - gcloud iam service-accounts add-iam-policy-binding {{.REPO_NAME}}@{{.GCP_PROJECT}}.iam.gserviceaccount.com --member="serviceAccount:{{.GCP_PROJECT}}.svc.id.goog[cnrm-system/cnrm-controller-manager]" --role="roles/iam.workloadIdentityUser"
       - gcloud iam service-accounts keys create {{.REPO_NAME}}-sa-key.json --iam-account={{.REPO_NAME}}@{{.GCP_PROJECT}}.iam.gserviceaccount.com
 
+  create-secrets:
+    desc: Create the OpenAI secret
+    silent: true
+    requires:
+      vars: [OPENAI_API_KEY]
+    cmd: kubectl create secret generic openai-api-key --from-literal=OPENAI_API_KEY={{.OPENAI_API_KEY}} --from-literal=OPENAI_APIKEY={{.OPENAI_API_KEY}}
+
   destroy-cluster:
     desc: Destroy a GKE cluster
     silent: true
