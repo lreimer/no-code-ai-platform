@@ -16,10 +16,6 @@ spec:
       labels:
         app: flowise
     spec:
-      # nodeSelector:
-        # cloud.google.com/compute-class: Scale-Out
-        # cloud.google.com/compute-class: Performance
-        # cloud.google.com/machine-family: c3
       containers:
       - name: flowise
         image: flowiseai/flowise:2.2.6
