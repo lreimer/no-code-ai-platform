@@ -13,6 +13,4 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  retry:
-    limit: 5
-    interval: 1m0s
+  retryInterval: 1m0s
