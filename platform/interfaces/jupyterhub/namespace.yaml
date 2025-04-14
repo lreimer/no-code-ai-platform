@@ -1,7 +1,7 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: flowise
+  name: jupyterhub
   annotations:
     # required to configure Config Connector with Google Cloud ProjectID
     cnrm.cloud.google.com/project-id: data-engineering-lab-411011
