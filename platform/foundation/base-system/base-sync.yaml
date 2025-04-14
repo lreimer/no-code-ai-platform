@@ -5,7 +5,7 @@ metadata:
   name: interfaces
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 5m0s
   path: ./platform/interfaces
   prune: true
   dependsOn:
@@ -13,3 +13,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+  retry:
+    limit: 5
+    interval: 1m0s
