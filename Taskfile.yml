@@ -32,9 +32,20 @@ tasks:
     requires:
       vars: [GCP_PROJECT, GCP_REGION]
     cmds:
-      - gcloud container clusters create no-code-ai-platform --location={{.GCP_REGION}} --project={{.GCP_PROJECT}} --release-channel=regular --addons HttpLoadBalancing,HorizontalPodAutoscaling --num-nodes=1 --min-nodes=1 --max-nodes=5 --enable-autoscaling --autoscaling-profile=optimize-utilization --machine-type=n1-standard-8
+      - gcloud container clusters create no-code-ai-platform --location={{.GCP_REGION}} --project={{.GCP_PROJECT}} --release-channel=regular --addons HttpLoadBalancing,HorizontalPodAutoscaling,ConfigConnector --workload-pool={{.GCP_PROJECT}}.svc.id.goog --num-nodes=1 --min-nodes=1 --max-nodes=5 --enable-autoscaling --machine-type=n1-standard-8
       - kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account)
       - kubectl cluster-info
+
+  create-gcp-sa:
+    desc: Create a GCP service account and bind it to the cluster
+    silent: true
+    requires:
+      vars: [GCP_PROJECT, REPO_NAME]
+    cmds:
+      - gcloud iam service-accounts create {{.REPO_NAME}} --description="No-Code AI Platform Service Account" --display-name="No-Code AI Platform Service Account"
+      - gcloud projects add-iam-policy-binding {{.GCP_PROJECT}} --role=roles/editor --member=serviceAccount:{{.REPO_NAME}}@{{.GCP_PROJECT}}.iam.gserviceaccount.com
+      - gcloud iam service-accounts add-iam-policy-binding {{.REPO_NAME}}@{{.GCP_PROJECT}}.iam.gserviceaccount.com --member="serviceAccount:{{.GCP_PROJECT}}.svc.id.goog[cnrm-system/cnrm-controller-manager]" --role="roles/iam.workloadIdentityUser"
+      - gcloud iam service-accounts keys create {{.REPO_NAME}}-sa-key.json --iam-account={{.REPO_NAME}}@{{.GCP_PROJECT}}.iam.gserviceaccount.com
 
   destroy-cluster:
     desc: Destroy a GKE cluster
