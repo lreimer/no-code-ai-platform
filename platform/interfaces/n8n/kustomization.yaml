@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # see https://github.com/n8n-io/n8n-hosting
+  - namespace.yaml
+  - postgres-claim0-persistentvolumeclaim.yaml
+  - postgres-configmap.yaml
+  - postgres-secret.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - n8n-claim0-persistentvolumeclaim.yaml
+  - n8n-secret.yaml
+  - n8n-deployment.yaml
+  - n8n-service.yaml

@@ -2,6 +2,22 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: domain
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  path: ./platform/domain
+  prune: true
+  dependsOn:
+    - name: flux-system
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  retryInterval: 1m0s
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: interfaces
   namespace: flux-system
 spec:
@@ -9,7 +25,7 @@ spec:
   path: ./platform/interfaces
   prune: true
   dependsOn:
-    - name: flux-system
+    - name: domain
   sourceRef:
     kind: GitRepository
     name: flux-system

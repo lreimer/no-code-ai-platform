@@ -1,8 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - sync-secrets.yaml
   - flowise/
-  # - jupyterhub/
-  # - langflow/
-  # - git::https://github.com/n8n-io/n8n-hosting.git//kubernetes?ref=main
+  - jupyterhub/
+  - langflow/
+  - n8n/
