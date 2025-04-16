@@ -10,7 +10,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: langflow
-      version: "0.1.0"
+      version: "0.1.1"
   interval: 1h0m0s
   releaseName: langflow-ide
   targetNamespace: langflow
